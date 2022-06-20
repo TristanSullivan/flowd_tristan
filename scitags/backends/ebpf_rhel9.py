@@ -67,7 +67,6 @@ int set_flow_label(struct __sk_buff *skb)
 """
 
 # Load eBPF program
-log.info("Using Tristan's version!")
 b = BPF(text=text, debug=0)
 flowlabel_table = b.get_table('flowlabel_table')
 fn = b.load_func("set_flow_label", BPF.SCHED_CLS)

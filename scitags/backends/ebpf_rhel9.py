@@ -67,6 +67,7 @@ int set_flow_label(struct __sk_buff *skb)
 """
 
 # Load eBPF program
+log.info("Using Tristan's version!")
 b = BPF(text=text, debug=0)
 flowlabel_table = b.get_table('flowlabel_table')
 fn = b.load_func("set_flow_label", BPF.SCHED_CLS)
@@ -159,8 +160,8 @@ def run(flow_queue, term_event, flow_map, ip_config):
                 # Fill the BPF hash with each half of the IP pointing to the flow label
                 flowlabel_table[ctypes.c_ulong(ip6_hi)] = ctypes.c_ulong(flowlabel)
                 flowlabel_table[ctypes.c_ulong(ip6_lo)] = ctypes.c_ulong(flowlabel)
-		log.info(ip6 + " added to flowlabel table")
-		log.debug("flowlabel is " + str(flowlabel))
+                log.info(ip6 + " added to flowlabel table")
+                log.debug("flowlabel is " + str(flowlabel))
 
             except ipaddress.AddressValueError:
                 err = 'Flow label marking only possible with IPv6'
@@ -176,10 +177,10 @@ def run(flow_queue, term_event, flow_map, ip_config):
                 ip6_lo = int(ip6[20:24] + ip6[25:29] + ip6[30:34] + ip6[35:39], 16)
 
                 # Remove IP from BPF hash
-		keys[0] = ctypes.c_ulong(ip6_hi)
-		keys[1] = ctypes.c_ulong(ip6_lo)
+                keys[0] = ctypes.c_ulong(ip6_hi)
+                keys[1] = ctypes.c_ulong(ip6_lo)
                 flowlabel_table.items_delete_batch(keys)
-		log.info(ip6 + " removed from flowlabel table")
+                log.info(ip6 + " removed from flowlabel table")
 
             except ipaddress.AddressValueError:
                 err = 'Flow label marking only possible with IPv6'
